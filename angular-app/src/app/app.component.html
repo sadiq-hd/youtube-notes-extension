@@ -1,0 +1,43 @@
+<div class="h-full w-full flex flex-col bg-white shadow-lg">
+  <header class="bg-yellow-400 px-4 py-2 font-bold text-lg text-black">
+    📝 YouTube Notes
+  </header>
+
+  <main class="flex-1 p-4 space-y-3 overflow-y-auto">
+    <div class="flex gap-2">
+      <input
+        [(ngModel)]="noteText"
+        placeholder="Write a note..."
+        class="flex-1 border rounded px-2 py-1"
+      />
+      <button
+        (click)="addNote()"
+        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+      >
+        Add
+      </button>
+    </div>
+
+    <ul class="space-y-2">
+      <li
+        *ngFor="let n of notes; let i = index"
+        class="flex justify-between items-center border-b pb-1"
+      >
+        <!-- بدل window خليناه method goToTime -->
+        <span
+          class="text-sm text-gray-800 cursor-pointer"
+          (click)="goToTime(n.time)"
+        >
+          [{{ formatTime(n.time) }}] {{ n.text }}
+        </span>
+
+        <button
+          (click)="deleteNote(i)"
+          class="text-red-600 text-xs hover:underline"
+        >
+          Delete
+        </button>
+      </li>
+    </ul>
+  </main>
+</div>

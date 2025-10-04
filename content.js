@@ -5,19 +5,25 @@
     const btn = document.createElement("button");
     btn.id = "yt-notes-btn";
     btn.innerText = "📝 Notes";
-    btn.style.position = "absolute";
-    btn.style.top = "80px";
-    btn.style.right = "20px";
-    btn.style.zIndex = "10000";
-    btn.style.padding = "8px 12px";
-    btn.style.background = "#ffcc00";
-    btn.style.border = "none";
-    btn.style.borderRadius = "4px";
-    btn.style.cursor = "pointer";
-
-    btn.addEventListener("click", () => {
-      togglePanel();
+    Object.assign(btn.style, {
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      zIndex: "10000",
+      padding: "10px 14px",
+      background: "#ff7043",
+      border: "none",
+      borderRadius: "999px",
+      color: "#fff",
+      fontWeight: "bold",
+      cursor: "pointer",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+      transition: "all 0.25s ease"
     });
+
+    btn.addEventListener("mouseenter", () => (btn.style.background = "#ff5722"));
+    btn.addEventListener("mouseleave", () => (btn.style.background = "#ff7043"));
+    btn.addEventListener("click", togglePanel);
 
     document.body.appendChild(btn);
   }
@@ -31,31 +37,44 @@
       iframe = document.createElement("iframe");
       iframe.id = "yt-notes-panel";
       iframe.src = chrome.runtime.getURL("panel/browser/index.html");
-      iframe.style.position = "fixed";
-      iframe.style.top = "0";
-      iframe.style.right = "0";
-      iframe.style.width = "400px";
-      iframe.style.height = "100%";
-      iframe.style.border = "none";
-      iframe.style.zIndex = "10001";
-      iframe.style.background = "white";
+      Object.assign(iframe.style, {
+        position: "fixed",
+        top: "0",
+        right: "0",
+        width: "380px",
+        height: "100%",
+        border: "none",
+        zIndex: "9999",
+        background: "white",
+        boxShadow: "-8px 0 18px rgba(0,0,0,0.25)",
+        transition: "transform 0.3s ease-in-out"
+      });
 
       document.body.appendChild(iframe);
+
+      // ✅ تمرير الوضع الليلي الحالي للإطار
+      const dark = document.documentElement.getAttribute("dark") || document.body.classList.contains("dark");
+      iframe.contentWindow?.postMessage({ action: "setDarkMode", dark }, "*");
     }
   }
 
-  // ✅ هنا نخلي content.js يسمع للرسائل من Angular
+  // ✅ استماع لإغلاق الإطار
+  window.addEventListener("message", (event) => {
+    if (event.data?.action === "closeYtNotes") {
+      const iframe = document.getElementById("yt-notes-panel");
+      if (iframe) iframe.remove();
+    }
+  });
+
+  // ✅ توفير الوقت الحالي للفيديو
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.action === "getTime") {
       const video = document.querySelector("video");
-      if (video) {
-        sendResponse({ time: Math.floor(video.currentTime) });
-      } else {
-        sendResponse({ time: 0 });
-      }
+      sendResponse({ time: video ? Math.floor(video.currentTime) : 0 });
     }
-    return true; // مهم عشان sendResponse يشتغل async
+    return true;
   });
 
+  // ✅ عند تحميل الصفحة
   window.addEventListener("load", addNotesButton);
 })();

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Notes",
   "version": "1.0.0",
-  "description": "Take timestamped notes on YouTube videos. Angular + Tailwind + Local storage.",
+  "description": "Take timestamped notes on YouTube videos. Angular + Local storage.",
   "permissions": ["storage", "scripting", "activeTab"],
   "host_permissions": ["https://www.youtube.com/*"],
   "background": {
@@ -17,12 +17,15 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["panel/*"],
+      "resources": ["panel/browser/*"],
       "matches": ["https://www.youtube.com/*"]
     }
   ],
   "action": {
     "default_popup": "panel/browser/index.html",
     "default_title": "YouTube Notes"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; style-src 'self' 'unsafe-inline';"
   }
 }

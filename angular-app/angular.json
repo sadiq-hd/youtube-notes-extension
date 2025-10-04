@@ -45,7 +45,16 @@
                   "maximumError": "4kB"
                 }
               ],
-              "outputHashing": "all"
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              },
+              "outputHashing": "all",
+              "extractLicenses": true,
+              "sourceMap": false
             },
             "development": {
               "optimization": false,
